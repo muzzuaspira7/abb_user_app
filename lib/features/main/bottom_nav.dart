@@ -16,7 +16,7 @@ class CustomBottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      minimum: const EdgeInsets.only(bottom: 10),
+      minimum: const EdgeInsets.only(bottom: 0),
       child: DotNavigationBar(
         itemPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
         currentIndex: currentIndex,

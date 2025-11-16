@@ -19,7 +19,7 @@ class SectionTitle extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        AppGap.v16,
+        AppGap.v12,
       ],
     );
   }

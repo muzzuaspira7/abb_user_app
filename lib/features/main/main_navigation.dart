@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../cart/presentation/cart.dart';
 import '../home/presentation/home.dart';
 import '../profile/presentation/profile.dart';
 import 'bottom_nav.dart';
@@ -15,7 +16,7 @@ class _MainNavigationState extends State<MainNavigation> {
 
   final List<Widget> pages = const [
     HomePage(),
-    HomePage(),
+    CartScreen(),
     HomePage(),
     ProfilePage(),
   ];
