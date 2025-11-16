@@ -1,18 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../services/firebase_auth_service.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 class AuthProvider extends ChangeNotifier {
   final FirebaseAuthService _authService = FirebaseAuthService();
   User? user;
+    Map<String, dynamic>? userData; 
   bool loading = false;
 
   AuthProvider() {
-    _authService.authStateChanges.listen((user) {
+    _authService.authStateChanges.listen((user) async {
       this.user = user;
+
+      if (user != null) {
+        await fetchUserData();
+      }
+
       notifyListeners();
     });
   }
+
+  Future<void> fetchUserData() async {
+    if (user == null) return;
+
+    final doc = await FirebaseFirestore.instance
+        .collection("users")
+        .doc(user!.uid)
+        .get();
+
+    userData = doc.data();
+    notifyListeners();
+  }
+
 
   /// Login
   Future<void> login(String email, String password) async {
@@ -29,6 +49,8 @@ class AuthProvider extends ChangeNotifier {
       }
 
       this.user = user;
+      final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool("isLoggedIn", true);
     } catch (e) {
       rethrow;
     } finally {
@@ -75,6 +97,8 @@ class AuthProvider extends ChangeNotifier {
   Future<void> logout() async {
     await _authService.logout();
     user = null;
+      final prefs = await SharedPreferences.getInstance();
+  await prefs.remove("isLoggedIn");
     notifyListeners();
   }
 }

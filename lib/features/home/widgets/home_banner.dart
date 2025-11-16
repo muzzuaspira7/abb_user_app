@@ -16,57 +16,61 @@ class SingleBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: 180.h,
-      margin: EdgeInsets.only(right: 12.w),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16.r),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            Image.network(
-              imageUrl,
-              fit: BoxFit.cover,
-            ),
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.black.withOpacity(0.5),
-                    Colors.transparent,
-                  ],
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(16.w),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: TStyles.title.copyWith(
-                      color: Colors.white,
-                      fontSize: 20.sp,
-                    ),
-                  ),
-                  SizedBox(height: 4.h),
-                  Text(
-                    subtitle,
-                    style: TStyles.subtitle.copyWith(
-                      color: Colors.white70,
-                      fontSize: 14.sp,
-                    ),
-                  ),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12.r),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.network(
+            imageUrl,
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) => Container(color: Colors.grey.shade300),
+          ),
+
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.black.withOpacity(0.7),
+                  Colors.black.withOpacity(0.4),
+                  Colors.black.withOpacity(0.6),
                 ],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
               ),
             ),
-          ],
-        ),
+          ),
+
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 20.h),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: TStyles.title.copyWith(
+                    color: Colors.white,
+                    fontSize: 18.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                SizedBox(height: 6.h),
+
+                Text(
+                  subtitle,
+                  style: TStyles.subtitle.copyWith(
+                    color: Colors.white.withOpacity(0.85),
+                    fontSize: 12.sp,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

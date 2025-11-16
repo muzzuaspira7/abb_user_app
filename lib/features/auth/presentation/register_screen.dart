@@ -1,14 +1,13 @@
 import 'package:abb_user_app/core/constant/images.dart';
-import 'package:abb_user_app/features/home/presentation/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
-
 import '../../../shared/styles/text_styles.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../shared/widgets/buttons/primary_button.dart';
 import '../../../shared/widgets/inputs/custom_text_field.dart';
 import '../../../providers/auth_provider.dart';
+import '../../main/main_navigation.dart';
 
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});
@@ -16,14 +15,13 @@ class RegisterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
-
     final nameController = TextEditingController();
     final emailController = TextEditingController();
     final passwordController = TextEditingController();
     final confirmPasswordController = TextEditingController();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFFCF6),
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -113,9 +111,10 @@ class RegisterScreen extends StatelessWidget {
           nameController.text.trim(),
         );
         if (authProvider.user != null) {
-         Navigator.pushReplacement(context, 
-           MaterialPageRoute(builder: (_) => const HomePage()),
-         );
+       Navigator.pushReplacement(
+  context,
+  MaterialPageRoute(builder: (_) => const MainNavigation()),
+);
         }
               } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(

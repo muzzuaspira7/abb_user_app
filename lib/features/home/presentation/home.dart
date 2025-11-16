@@ -1,105 +1,304 @@
-import 'package:abb_user_app/shared/widgets/inputs/custom_text_field.dart';
+import 'package:abb_user_app/features/home/widgets/home_banner.dart';
+import 'package:abb_user_app/features/home/widgets/special_orders.dart';
+import 'package:abb_user_app/features/home/widgets/category_chip.dart';
+import 'package:abb_user_app/features/home/widgets/product_widget.dart';
+import 'package:abb_user_app/providers/auth_provider.dart';
+import 'package:abb_user_app/providers/product_provider.dart';
+import 'package:abb_user_app/shared/styles/text_styles.dart';
+import 'package:abb_user_app/core/theme/app_colors.dart';
+import 'package:abb_user_app/shared/widgets/heading/section_title.dart';
+import 'package:abb_user_app/shared/widgets/layout/gap.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../../shared/styles/text_styles.dart';
-import '../../../core/theme/app_colors.dart';
-import '../widgets/product_widget.dart';
+import 'package:provider/provider.dart';
 
-class HomePage extends StatelessWidget {
+import '../../../providers/banner_provider.dart';
+
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
-  final List<Map<String, dynamic>> dummyProducts = const [
-    {
-      'title': 'Hyderabadi Biryani',
-      'price': 250,
-      'image': 'https://www.amburbandaaribiryani.in/assets/dish2-xXSQahHy.png',
-    },
-    {
-      'title': 'Chicken Biryani',
-      'price': 200,
-      'image': 'https://www.amburbandaaribiryani.in/assets/dish2-xXSQahHy.png',
-    },
-    {
-      'title': 'Veg Biryani',
-      'price': 150,
-      'image': 'https://www.amburbandaaribiryani.in/assets/dish2-xXSQahHy.png',
-    },
-  ];
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final provider = Provider.of<ProductProvider>(context, listen: false);
+      provider.fetchRecommended();
+      provider.fetchAllProducts();
+
+        final bannerProvider = Provider.of<BannerProvider>(context, listen: false);
+  bannerProvider.fetchBanners();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final auth = Provider.of<AuthProvider>(context);
+    final userName = auth.userData?["name"] ?? "User";
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
+        surfaceTintColor: Colors.transparent,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Hi, Good Morning",
-              style: TStyles.subtitle,
+            Row(
+              children: [
+                Text(
+                  "Hi, ",
+                  style: TStyles.title.copyWith(
+                    fontSize: 19.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  userName,
+                  style: TStyles.title.copyWith(
+                    fontSize: 19.sp,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.accent,
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: 2.h),
+            AppGap.v4,
             Text(
-              "Muzammil",
-              style: TStyles.title.copyWith(color: AppColors.textDark),
-            )
+              "Get your favourite biryani",
+              style: TStyles.subtitle.copyWith(fontSize: 12.sp),
+            ),
           ],
         ),
-        backgroundColor: AppColors.background,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: AppColors.textDark),
         actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 16.w),
-            child: GestureDetector(
-              onTap: () {},
-              child: CircleAvatar(
-                backgroundColor: AppColors.accent.withOpacity(0.7),
-                child: Icon(
-                  Icons.person_2_outlined,
-                  color: AppColors.white,
-                ),
-              ),
+          IconButton(
+            onPressed: () {},
+            icon: Icon(
+              Icons.shopping_cart,
+              color: AppColors.black.withOpacity(0.6),
             ),
           ),
+          AppGap.h8,
         ],
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomTextField(
-                hintText: "Search..",
-                prefixIcon: const Icon(Icons.search, color: AppColors.textDark),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AppGap.v14,
+
+            // ----------------- BANNER CAROUSEL ---------------------
+        Consumer<BannerProvider>(
+  builder: (context, bannerProvider, _) {
+    if (bannerProvider.banners.isEmpty) {
+      return SizedBox(
+        height: 150.h,
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    return CarouselSlider.builder(
+      itemCount: bannerProvider.banners.length,
+      itemBuilder: (context, index, realIdx) {
+        final banner = bannerProvider.banners[index];
+        return SingleBanner(
+          imageUrl: banner.imageUrl,
+          title: banner.title,
+          subtitle: banner.subtitle,
+        );
+      },
+      options: CarouselOptions(
+        height: 150.h,
+        viewportFraction: 0.75,
+        autoPlay: true,
+        enlargeCenterPage: true,
+        enableInfiniteScroll: true,
+      ),
+    );
+  },
+),
+
+            AppGap.v26,
+
+            // ----------------- SPECIAL ORDERS SCROLL ---------------
+            SizedBox(
+              height: 110.h,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  SpecialOrders(
+                    imageUrl: "assets/images/birthday.png",
+                    title: "Birthday Parties",
+                  ),
+                  AppGap.h14,
+                  SpecialOrders(
+                    imageUrl: "assets/images/wedding.png",
+                    title: "Wedding Orders",
+                  ),
+                  AppGap.h14,
+                  SpecialOrders(
+                    imageUrl: "assets/images/corporate.png",
+                    title: "Corporate Events",
+                  ),
+                  AppGap.h14,
+                  SpecialOrders(
+                    imageUrl: "assets/images/bulk.png",
+                    title: "Family Pack",
+                  ),
+                ],
               ),
-              SizedBox(height: 20.h),
-              Text(
-                "Recommendations",
-                style: TStyles.title.copyWith(fontSize: 22.sp),
+            ),
+
+            AppGap.v20,
+
+            // ----------------- CATEGORY CHIPS --------------------
+            SizedBox(
+              height: 45.h,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                children: [
+                  CategoryChip(
+                    icon: Icons.category,
+                    label: "All",
+                    selected: context.select<ProductProvider, bool>(
+                        (p) => p.selectedCategory == "All"),
+                    onTap: () =>
+                        context.read<ProductProvider>().selectCategory("All"),
+                  ),
+                  CategoryChip(
+                    icon: Icons.category,
+                    label: "Chicken",
+                    selected: context.select<ProductProvider, bool>(
+                        (p) => p.selectedCategory == "Chicken"),
+                    onTap: () =>
+                        context.read<ProductProvider>().selectCategory("Chicken"),
+                  ),
+                  CategoryChip(
+                    icon: Icons.category,
+                    label: "Mutton",
+                    selected: context.select<ProductProvider, bool>(
+                        (p) => p.selectedCategory == "Mutton"),
+                    onTap: () =>
+                        context.read<ProductProvider>().selectCategory("Mutton"),
+                  ),
+                  CategoryChip(
+                    icon: Icons.rice_bowl,
+                    label: "Biryani",
+                    selected: context.select<ProductProvider, bool>(
+                        (p) => p.selectedCategory == "Biryani"),
+                    onTap: () =>
+                        context.read<ProductProvider>().selectCategory("Biryani"),
+                  ),
+                  CategoryChip(
+                    icon: Icons.rice_bowl_rounded,
+                    label: "Kushka",
+                    selected: context.select<ProductProvider, bool>(
+                        (p) => p.selectedCategory == "Kushka"),
+                    onTap: () =>
+                        context.read<ProductProvider>().selectCategory("Kushka"),
+                  ),
+                  CategoryChip(
+                    icon: Icons.local_dining,
+                    label: "Sweets",
+                    selected: context.select<ProductProvider, bool>(
+                        (p) => p.selectedCategory == "Sweets"),
+                    onTap: () =>
+                        context.read<ProductProvider>().selectCategory("Sweets"),
+                  ),
+                  CategoryChip(
+                    icon: Icons.local_drink,
+                    label: "Drinks",
+                    selected: context.select<ProductProvider, bool>(
+                        (p) => p.selectedCategory == "Drinks"),
+                    onTap: () =>
+                        context.read<ProductProvider>().selectCategory("Drinks"),
+                  ),
+                ],
               ),
-              SizedBox(height: 12.h),
-              SizedBox(
-                height: 100.h,
-                child: ListView.separated(
+            ),
+
+            AppGap.v20,
+
+            // ----------------- RECOMMENDED DISHES -----------------
+            SectionTitle("Recommended Dishes"),
+            AppGap.v16,
+            Consumer<ProductProvider>(builder: (context, provider, child) {
+              if (provider.loadingRecommended) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (provider.error != null) {
+                return Text("Error: ${provider.error}");
+              } else if (provider.filteredProducts.isEmpty) {
+                return const Center(child: Text("No products found"));
+              }
+
+              return SizedBox(
+                height: 250.h,
+                child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: dummyProducts.length,
-                  separatorBuilder: (_, __) => SizedBox(width: 12.w),
+                  itemCount: provider.recommendedFilteredProducts.length,
                   itemBuilder: (context, index) {
-                    final product = dummyProducts[index];
-                    return ProductCard(
-                      title: product['title'],
-                      price: product['price'],
-                      image: product['image'],
-                      onAdd: () {
-                      },
+                    final p = provider.recommendedFilteredProducts[index];
+                    return Container(
+                      width: 145.w,
+                      margin: EdgeInsets.only(right: 12.w),
+                      child: ProductCard(
+                        title: p.name,
+                        price: p.price,
+                        image: p.imageUrl,
+                        serves: p.serves,
+                        onAdd: () {},
+                      ),
                     );
                   },
                 ),
-              ),
-            ],
-          ),
+              );
+            }),
+
+            AppGap.v20,
+
+            // ----------------- ALL PRODUCTS -------------
+            SectionTitle("All Dishes"),
+            AppGap.v16,
+            Consumer<ProductProvider>(builder: (context, provider, child) {
+              if (provider.loadingAll) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (provider.error != null) {
+                return Text("Error: ${provider.error}");
+              } else if (provider.filteredProducts.isEmpty) {
+                return const Center(child: Text("No products found"));
+              }
+
+              return GridView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: provider.filteredProducts.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 12.h,
+                  crossAxisSpacing: 12.w,
+                  childAspectRatio: 0.68,
+                ),
+                itemBuilder: (context, index) {
+                  final p = provider.filteredProducts[index];
+                  return ProductCard(
+                    title: p.name,
+                    price: p.price,
+                    image: p.imageUrl,
+                    serves: p.serves,
+                    onAdd: () {},
+                  );
+                },
+              );
+            }),
+          ],
         ),
       ),
     );

@@ -8,6 +8,8 @@ class ProductCard extends StatelessWidget {
   final int price;
   final String image;
   final VoidCallback? onAdd;
+  final VoidCallback? onTap;
+  final String? serves;
 
   const ProductCard({
     super.key,
@@ -15,81 +17,120 @@ class ProductCard extends StatelessWidget {
     required this.price,
     required this.image,
     this.onAdd,
+    this.onTap,
+    this.serves,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(12.w),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 8.r,
-            offset: const Offset(0, 4),
+    return InkWell(
+      borderRadius: BorderRadius.circular(12.r),
+      onTap: () {},
+      child: Container(
+        width: 160.w,
+        decoration: BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(
+            color: Colors.grey.shade200,
+            width: 1,
           ),
-        ],
-      ),
-      child: Row(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12.r),
-            child: Image.asset(
-              image,
-              height: 80.h,
-              width: 80.w,
-              fit: BoxFit.cover,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.09),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
             ),
-          ),
-          SizedBox(width: 16.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: TStyles.subtitle.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textDark,
-                    fontSize: 16.sp,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: 6.h),
-                Text(
-                  "₹$price",
-                  style: TStyles.subtitle.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.primary,
-                    fontSize: 14.sp,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          GestureDetector(
-            onTap: onAdd,
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFFFFC31D), Color(0xFFFFE25C)],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(12.r),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(8.r),
+                topRight: Radius.circular(8.r),
               ),
-              child: const Icon(
-                Icons.add,
-                color: AppColors.white,
-                size: 20,
+              child: Image.network(
+                image,
+                height: 140.h,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(
+                  height: 140.h,
+                  color: Colors.grey.shade300,
+                  alignment: Alignment.center,
+                  child: Icon(Icons.broken_image, size: 40.w),
+                ),
               ),
             ),
-          ),
-        ],
+
+            SizedBox(height: 10.h),
+
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10.w),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TStyles.normalTitle.copyWith(
+                      fontSize: 13.5.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+
+                  SizedBox(height: 4.h),
+
+                  Text(
+                    "Serves: $serves",
+                    style: TStyles.smallText.copyWith(
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+
+                  SizedBox(height: 10.h),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "₹$price",
+                        style: TStyles.normalTitle.copyWith(
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.accent,
+                        ),
+                      ),
+
+                      InkWell(
+                        onTap: onAdd,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 10.w, vertical: 6.h),
+                          decoration: BoxDecoration(
+                            color: AppColors.accent,
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                          child: Text(
+                            "Add",
+                            style: TStyles.smallText.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            SizedBox(height: 12.h),
+          ],
+        ),
       ),
     );
   }
