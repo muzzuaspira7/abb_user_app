@@ -77,7 +77,7 @@ class FirebaseAuthService {
     });
   }
 
-  /// Delete From Both AUTH + FIRESTORE
+  /// Delete From Both AUTH + FIRESTORE | | | | | |
   Future<void> deleteUserCompletely(User user) async {
     try {
       // Delete Firestore Document

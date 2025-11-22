@@ -10,7 +10,6 @@ import '../../../providers/auth_provider.dart';
 import '../../main/main_navigation.dart';
 import 'register_screen.dart';
 
-
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
@@ -20,11 +19,9 @@ class LoginScreen extends StatelessWidget {
 
     final emailController = TextEditingController();
     final passwordController = TextEditingController();
-
     return Scaffold(
       backgroundColor: const Color(0xFFFFFCF6),
-      body: 
-      SafeArea(
+      body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
             child: Container(
@@ -44,77 +41,80 @@ class LoginScreen extends StatelessWidget {
               child: Padding(
                 padding: EdgeInsets.all(20.w),
                 child: Column(
-                 mainAxisSize: MainAxisSize.min,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                                            Image.asset(AppImages.logo, height: 50.h),
-                                            SizedBox(height: 10.h),
-
+                    Image.asset(AppImages.logo, height: 50.h),
+                    SizedBox(height: 10.h),
                     Text(
                       'Welcome Back!',
-                      style: TStyles.title.copyWith(color: AppColors.white, fontWeight: FontWeight.bold, fontSize: 30.sp),
+                      style: TStyles.title.copyWith(
+                        color: AppColors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30.sp,
+                      ),
                     ),
-                      Text(
+                    Text(
                       'Ambur Bandaari Biryani',
-                      style: TStyles.smallText.copyWith(color: AppColors.white,),
+                      style: TStyles.smallText.copyWith(color: AppColors.white),
                     ),
                     SizedBox(height: 20.h),
-                
+
                     CustomTextField(
                       controller: emailController,
                       hintText: 'Email',
                       keyboardType: TextInputType.emailAddress,
                     ),
                     SizedBox(height: 16.h),
-                
                     CustomTextField(
                       controller: passwordController,
                       hintText: 'Password',
                       obscureText: true,
                     ),
                     SizedBox(height: 24.h),
-                
-                  ReusableButton(
-                  title: authProvider.loading ? 'Logging in...' : 'Login',
-                  onTap: () {
-                    () async {
-                      try {
-                        await authProvider.login(
-                          emailController.text.trim(),
-                          passwordController.text.trim(),
-                        );
-                        if (authProvider.user != null) {
-                        Navigator.pushReplacement(
-  context,
-  MaterialPageRoute(builder: (_) => const MainNavigation()),
-);
-                        }
-                      } catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(e.toString())),
-                        );
-                      }
-                    }(); 
-                  },
-                ),
-                
+                    ReusableButton(
+                      title: authProvider.loading ? 'Logging in...' : 'Login',
+                      onTap: () {
+                        () async {
+                          try {
+                            await authProvider.login(
+                              emailController.text.trim(),
+                              passwordController.text.trim(),
+                            );
+                            if (authProvider.user != null) {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const MainNavigation(),
+                                ),
+                              );
+                            }
+                          } catch (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(e.toString())),
+                            );
+                          }
+                        }();
+                      },
+                    ),
                     SizedBox(height: 16.h),
                     GestureDetector(
-                      onTap: () {
-                      },
+                      onTap: () {},
                       child: Text(
                         'Forgot Password?',
-                        style: TStyles.smallText.copyWith(color: AppColors.primary),
+                        style: TStyles.smallText.copyWith(
+                          color: AppColors.primary,
+                        ),
                       ),
                     ),
                     SizedBox(height: 12.h),
-                
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           "Don't have an account? ",
-                          style: TStyles.smallText.copyWith(color: AppColors.background),
-                          
+                          style: TStyles.smallText.copyWith(
+                            color: AppColors.background,
+                          ),
                         ),
                         GestureDetector(
                           onTap: () {
@@ -144,8 +144,5 @@ class LoginScreen extends StatelessWidget {
         ),
       ),
     );
- 
- 
- 
   }
 }

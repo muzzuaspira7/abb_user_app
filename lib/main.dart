@@ -5,11 +5,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'features/splash/presentation/splash_screen.dart';
 import 'firebase_options.dart';
 import 'package:provider/provider.dart';
-
 import 'providers/auth_provider.dart';
 import 'providers/banner_provider.dart';
 import 'providers/cart_provider.dart';
 import 'providers/product_provider.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -28,7 +28,6 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(

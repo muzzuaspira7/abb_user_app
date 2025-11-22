@@ -93,7 +93,7 @@ class AuthProvider extends ChangeNotifier {
   }
 }
 
-  /// Logout
+  /// Logout 
   Future<void> logout() async {
     await _authService.logout();
     user = null;

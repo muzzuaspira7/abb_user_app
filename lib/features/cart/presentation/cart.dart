@@ -5,10 +5,9 @@ import 'package:provider/provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../shared/styles/text_styles.dart';
 import '../../../providers/cart_provider.dart';
-
+import 'package:geolocator/geolocator.dart';
 class CartScreen extends StatelessWidget {
   const CartScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     final cartProvider = Provider.of<CartProvider>(context);
@@ -240,15 +239,51 @@ class CartScreen extends StatelessWidget {
                         SizedBox(
                           width: double.infinity,
                           child: 
-                          ReusableButton(title: "Checkout", onTap: () {
-                            cartProvider.checkout();
-                          }),
+                          ReusableButton(title: "Checkout",
+                          
+                         onTap: () async {
+                          print("Checking distance before checkout...");
+  // 1. Get user location
+  final position = await Geolocator.getCurrentPosition();
+
+  // 2. Shop lat/long (from Firebase)
+  double shopLat = 13.0575998;
+  double shopLong = 80.2739333;
+
+  // 3. Calculate distance
+  double distance = cartProvider.calculateDistance(
+    position.latitude,
+    position.longitude,
+    shopLat,
+    shopLong,
+  );
+
+  // 4. Check condition
+  if (distance <= 5) {
+    cartProvider.checkout();
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          "You are ${distance.toStringAsFixed(1)} KM away from the shop. Order allowed only within 5 KM.",
+        ),
+      ),
+    );
+  }
+},
+                          )
+
+
+                    
                         ),
                       ],
+                
+                
                     ),
                   ),
                 ],
               ),
+              
             ),
     );
   }
